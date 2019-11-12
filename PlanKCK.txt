@@ -1,0 +1,22 @@
+Plan:
+- Podzielić zdjęcia na łatwe, średnie, trudne ok. 15 w każdej kategorii
+ + Brakuje nam trochę w średnich i trudnych (chyba że źle przydzieliłem niektóre)
+- Wprowadzanie zdjęć do programu
+ + z konsoli (chyba będzie najłatwiej)
+  ^ wpisujesz main.py --input <ścieżka do zdjęcia>
+ + przekształcenie na odcienie szarości
+  ^ Zrobione (1 linijka kodu)
+
+Kostki:
+1 podejście
+ + Wykrywanie ścianek
+ + Zostawianie na obrazie tylko ścianek (resztę wycinamy?)
+ + Policzenie kropek na każdej ściance
+
+2 podejście
+ + Wykrywanie kropek na obrazie
+  ^ Można łatwo zrobić cv.SimpleBlobDetector()
+ + Grupowanie na podstawie odległości ?
+  ^ Chyba też można zrobić Blob Detectorem
+ 
+- Rysowanie wyniku działania programu na oryginalnym obrazie
