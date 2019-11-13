@@ -1,0 +1,7 @@
+#!/bin/bash
+
+i=1;
+for filename in $(pwd)/*.png; do
+    mv $filename $(pwd)/"easy$i.png";
+    (( i=$i+1 ));
+    done;
