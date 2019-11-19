@@ -2,6 +2,6 @@
 
 i=1;
 for filename in $(pwd)/*.jpg; do
-    mv $filename $(pwd)/"easy$i.jpg";
+    mv $filename $(pwd)/"hard$i.jpg";
     (( i=$i+1 ));
     done;
