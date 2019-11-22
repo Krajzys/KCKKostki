@@ -68,6 +68,25 @@ def detect5(circle, circleList):
 	return ()
 
 
+def detect6(circle, circleList):
+	det3 = detect3(circle, circleList)
+	if det3:
+		for i in range(len(circleList)):
+			if circle[0] != circleList[i][0] and circle[1] != circleList[i][1] and distCircle(circle, circleList[i]) < circle[2]*6:
+				if i not in det3:
+					det3again = detect3(circleList[i], circleList)
+					if det3again:
+						last = det3 + det3again
+						
+						return tuple([u for u in last] + [i])
+	return ()
+	
+def detect4:
+	return ()
+	
+def detect2:
+	return ()
+
 def distCircle(circle, circle2):
 	distx = circle[0] - circle2[0] if circle[0] > circle2[0] else circle2[0] - circle[0]
 	disty = circle[1] - circle2[1] if circle[1] > circle2[1] else circle2[1] - circle[1]
@@ -160,6 +179,12 @@ for src in srcs:
 			for j in det5:
 				classified.append(j)
 			cv.putText(src, "Kostka 5", (circ1[0], circ1[1]), cv.FONT_HERSHEY_PLAIN, 5.0, (255, 0, 255), 10)
+		det6 = detect6(circ1, diceEyes)
+		if det6 and i not in classified and det6[0] not in classified and det6[1] not in classified and det6[2] not in classified and det6[3] not in classified and det6[4] not in classified:
+			classified.append(i)
+			for j in det6:
+				classified.append(j)
+			cv.putText(src, "Kostka 6", (circ1[0], circ1[1]), cv.FONT_HERSHEY_PLAIN, 5.0, (0, 120, 255), 10)
 			
 		det3 = detect3(circ1, diceEyes)
 		if det3 and i not in classified and det3[0] not in classified and det3[1] not in classified:
