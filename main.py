@@ -81,10 +81,10 @@ def detect6(circle, circleList):
 						return tuple([u for u in last] + [i])
 	return ()
 	
-def detect4:
+def detect4():
 	return ()
 	
-def detect2:
+def detect2():
 	return ()
 
 def distCircle(circle, circle2):
