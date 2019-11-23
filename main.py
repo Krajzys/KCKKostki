@@ -67,7 +67,8 @@ def detect5(circle, circleList):
 						return ret
 	return ()
 
-
+# Function to detect 6
+# We detect three dots and search for another three dots close by
 def detect6(circle, circleList):
 	det3 = detect3(circle, circleList, 4)
 	if det3:
@@ -80,7 +81,12 @@ def detect6(circle, circleList):
 						
 						return tuple([u for u in last] + [i])
 	return ()
-	
+
+# Function to detect 4
+# We detect close by dot, then we detect another one that
+# is 90 degrees in other direction. If we find those two dots
+# we calculate middle point between them. Finally we check if there
+# is a dot on the oposite side of the middle point.
 def detect4(circle, circleList):
 	saved = []
 	imgPoint = []
@@ -112,22 +118,19 @@ def detect4(circle, circleList):
 					break
 					
 	if len(imgPoint) == 2:
-		return saved
-		"""
-		xdif = circle[0] - imgPoint[0]
-		ydif = circle[1] - imgPoint[1]
+		#return saved
+		xpoint = circle[0] - imgPoint[0]
+		ypoint = circle[1] - imgPoint[1]
 		for i in range(len(circleList)):
-			print("IMAGINARY POINT", imgPoint[0], imgPoint[1])
-			print("DIFFS:", xdif, ydif)
-			print("CIRCLE:", circleList[i])
-			print("Mamy:", distCircle((xdif, ydif), circleList[i]))
-			if distCircle(circleList[i], (imgPoint[0] - xdif, imgPoint[1] - ydif)) < 40:
-				saved.append(i)
-				return i
-		"""
+			if circleList[i][0] != circle[0] and circleList[i][1] != circle[1]:
+				if distCircle((imgPoint[0] - xpoint, imgPoint[1] - ypoint), circleList[i]) < 40:
+					return saved + [i]
+					print("Lolo")
 			
 	return ()
 	
+# Function to detect 2
+# We only check if there is a close by dot if there is it may be 2
 def detect2(circle, circleList):
 	for i in range(len(circleList)):
 		if circleList[i][0] != circle[0] and circleList[i][1] != circle[1]:
@@ -135,6 +138,7 @@ def detect2(circle, circleList):
 				return [i]
 	return ()
 
+# Function to calculate distance between two points
 def distCircle(circle, circle2):
 	distx = circle[0] - circle2[0] if circle[0] > circle2[0] else circle2[0] - circle[0]
 	disty = circle[1] - circle2[1] if circle[1] > circle2[1] else circle2[1] - circle[1]
@@ -216,6 +220,9 @@ for src in srcs:
 
 	# Grouping dots
 	classified = []
+	
+	# Search for dices with 1,5,6 dots
+	# Only seach for not yet classified dots
 	for i in range(len(diceEyes)):
 		circ1 = diceEyes[i]
 		if detect1(circ1, diceEyes) and i not in classified:
@@ -234,6 +241,7 @@ for src in srcs:
 				classified.append(j)
 			cv.putText(src, "Kostka 6", (circ1[0], circ1[1]), cv.FONT_HERSHEY_PLAIN, 5.0, (0, 120, 255), 10)
 	
+	# Search for dices with 3 dots
 	for i in range(len(diceEyes)):
 		circ1 = diceEyes[i]
 		det3 = detect3(circ1, diceEyes)
@@ -243,16 +251,19 @@ for src in srcs:
 			classified.append(det3[1])
 			cv.putText(src, "Kostka 3", (circ1[0], circ1[1]), cv.FONT_HERSHEY_PLAIN, 5.0, (255, 255, 0), 10)
 	
+	# Search for dices with 4 dots
 	for i in range(len(diceEyes)):
 		circ1 = diceEyes[i]
 		det4 = detect4(circ1, diceEyes)
 		print(det4, classified)
-		if det4 and i not in classified and det4[0] not in classified and det4[1] not in classified:
+		if det4 and i not in classified and det4[0] not in classified and det4[1] not in classified and det4[2] not in classified:
 			classified.append(i)
 			classified.append(det4[0])
 			classified.append(det4[1])
+			classified.append(det4[2])
 			cv.putText(src, "Kostka 4", (circ1[0], circ1[1]), cv.FONT_HERSHEY_PLAIN, 5.0, (120, 255, 0), 10)
 	
+	# Search for dices with to dots
 	for i in range(len(diceEyes)):
 		circ1 = diceEyes[i]
 		det2 = detect2(circ1, diceEyes)
@@ -261,14 +272,12 @@ for src in srcs:
 			classified.append(det2[0])
 			cv.putText(src, "Kostka 2", (circ1[0], circ1[1]), cv.FONT_HERSHEY_PLAIN, 5.0, (120, 0, 255), 10)
 	
-	# if i fix detecting 4 to be complete this will detect remaining ones
-	"""
+	# If there are unclassified dots classify them as ones
 	for i in range(len(diceEyes)):
 		circ1 = diceEyes[i]
 		if i not in classified:
 			classified.append(i)
 			cv.putText(src, "Kostka 1", (circ1[0], circ1[1]), cv.FONT_HERSHEY_PLAIN, 5.0, (0, 255, 255), 10)
-	"""
 
 	# Create Windows
 	if args.debug:
