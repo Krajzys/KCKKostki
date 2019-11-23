@@ -19,11 +19,11 @@ def detect1(circle, circleList): # dziala dla wszystkich poza easy16
 # Function to detect 3
 # We find nearby dots and then check if there is a dot oposite from the first one
 # if so then it is a 3
-def detect3(circle, circleList):
+def detect3(circle, circleList, radius = 4.3):
 	#print("3--------------------")
 	for i in range(len(circleList)):
 		if circleList[i][0] != circle[0] and circleList[i][1] != circle[1]:
-			if distCircle(circle, circleList[i]) < circle[2]*4:
+			if distCircle(circle, circleList[i]) < circle[2]*radius:
 				xdif = circle[0] + (circle[0] - circleList[i][0])
 				ydif = circle[1] + (circle[1] - circleList[i][1])
 				for j in range(len(circleList)):
@@ -69,22 +69,70 @@ def detect5(circle, circleList):
 
 
 def detect6(circle, circleList):
-	det3 = detect3(circle, circleList)
+	det3 = detect3(circle, circleList, 4)
 	if det3:
 		for i in range(len(circleList)):
 			if circle[0] != circleList[i][0] and circle[1] != circleList[i][1] and distCircle(circle, circleList[i]) < circle[2]*6:
 				if i not in det3:
-					det3again = detect3(circleList[i], circleList)
+					det3again = detect3(circleList[i], circleList, 4)
 					if det3again:
 						last = det3 + det3again
 						
 						return tuple([u for u in last] + [i])
 	return ()
 	
-def detect4():
+def detect4(circle, circleList):
+	saved = []
+	imgPoint = []
+	for i in range(len(circleList)):
+		if circleList[i][0] != circle[0] and circleList[i][1] != circle[1]:
+			if distCircle(circle, circleList[i]) < circle[2]*7:
+				#print("4HERE")
+				xdifTemp = (circle[0] - circleList[i][0])
+				ydifTemp = (circle[1] - circleList[i][1])
+				for j in range(len(circleList)):
+					if distCircle((circle[0] + ydifTemp, circle[1] - xdifTemp), circleList[j]) < 40:
+						#print("2HERE")
+						saved.append(i)
+						saved.append(j)
+						break
+					if distCircle((circle[0] - ydifTemp, circle[1] + xdifTemp), circleList[j]) < 40:
+						#print("3HERE")
+						saved.append(i)
+						saved.append(j)
+						break
+				if len(saved) == 2:
+					imgPoint.append(int((circleList[saved[0]][0] + circleList[saved[1]][0])/2))
+					imgPoint.append(int((circleList[saved[0]][1] + circleList[saved[1]][1])/2))
+					#print("POINT")
+					print(circleList[i])
+					print(imgPoint)
+					print(circleList[j])
+					#print("Middle:", int((circleList[saved[0]][0] + circleList[saved[1]][0])/2), int((circleList[saved[0]][1] + circleList[saved[1]][1])/2))
+					break
+					
+	if len(imgPoint) == 2:
+		return saved
+		"""
+		xdif = circle[0] - imgPoint[0]
+		ydif = circle[1] - imgPoint[1]
+		for i in range(len(circleList)):
+			print("IMAGINARY POINT", imgPoint[0], imgPoint[1])
+			print("DIFFS:", xdif, ydif)
+			print("CIRCLE:", circleList[i])
+			print("Mamy:", distCircle((xdif, ydif), circleList[i]))
+			if distCircle(circleList[i], (imgPoint[0] - xdif, imgPoint[1] - ydif)) < 40:
+				saved.append(i)
+				return i
+		"""
+			
 	return ()
 	
-def detect2():
+def detect2(circle, circleList):
+	for i in range(len(circleList)):
+		if circleList[i][0] != circle[0] and circleList[i][1] != circle[1]:
+			if distCircle(circle, circleList[i]) < circle[2]*7:
+				return [i]
 	return ()
 
 def distCircle(circle, circle2):
@@ -185,14 +233,42 @@ for src in srcs:
 			for j in det6:
 				classified.append(j)
 			cv.putText(src, "Kostka 6", (circ1[0], circ1[1]), cv.FONT_HERSHEY_PLAIN, 5.0, (0, 120, 255), 10)
-			
+	
+	for i in range(len(diceEyes)):
+		circ1 = diceEyes[i]
 		det3 = detect3(circ1, diceEyes)
 		if det3 and i not in classified and det3[0] not in classified and det3[1] not in classified:
 			classified.append(i)
 			classified.append(det3[0])
 			classified.append(det3[1])
 			cv.putText(src, "Kostka 3", (circ1[0], circ1[1]), cv.FONT_HERSHEY_PLAIN, 5.0, (255, 255, 0), 10)
-		
+	
+	for i in range(len(diceEyes)):
+		circ1 = diceEyes[i]
+		det4 = detect4(circ1, diceEyes)
+		print(det4, classified)
+		if det4 and i not in classified and det4[0] not in classified and det4[1] not in classified:
+			classified.append(i)
+			classified.append(det4[0])
+			classified.append(det4[1])
+			cv.putText(src, "Kostka 4", (circ1[0], circ1[1]), cv.FONT_HERSHEY_PLAIN, 5.0, (120, 255, 0), 10)
+	
+	for i in range(len(diceEyes)):
+		circ1 = diceEyes[i]
+		det2 = detect2(circ1, diceEyes)
+		if det2 and i not in classified and det2[0] not in classified:
+			classified.append(i)
+			classified.append(det2[0])
+			cv.putText(src, "Kostka 2", (circ1[0], circ1[1]), cv.FONT_HERSHEY_PLAIN, 5.0, (120, 0, 255), 10)
+	
+	# if i fix detecting 4 to be complete this will detect remaining ones
+	"""
+	for i in range(len(diceEyes)):
+		circ1 = diceEyes[i]
+		if i not in classified:
+			classified.append(i)
+			cv.putText(src, "Kostka 1", (circ1[0], circ1[1]), cv.FONT_HERSHEY_PLAIN, 5.0, (0, 255, 255), 10)
+	"""
 
 	# Create Windows
 	if args.debug:
