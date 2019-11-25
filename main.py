@@ -111,9 +111,9 @@ def detect4(circle, circleList):
 					imgPoint.append(int((circleList[saved[0]][0] + circleList[saved[1]][0])/2))
 					imgPoint.append(int((circleList[saved[0]][1] + circleList[saved[1]][1])/2))
 					#print("POINT")
-					print(circleList[i])
-					print(imgPoint)
-					print(circleList[j])
+					#print(circleList[i])
+					#print(imgPoint)
+					#print(circleList[j])
 					#print("Middle:", int((circleList[saved[0]][0] + circleList[saved[1]][0])/2), int((circleList[saved[0]][1] + circleList[saved[1]][1])/2))
 					break
 					
@@ -125,7 +125,7 @@ def detect4(circle, circleList):
 			if circleList[i][0] != circle[0] and circleList[i][1] != circle[1]:
 				if distCircle((imgPoint[0] - xpoint, imgPoint[1] - ypoint), circleList[i]) < 40:
 					return saved + [i]
-					print("Lolo")
+					#print("Lolo")
 			
 	return ()
 	
@@ -237,9 +237,13 @@ for src in srcs:
 		det6 = detect6(circ1, diceEyes)
 		if det6 and i not in classified and det6[0] not in classified and det6[1] not in classified and det6[2] not in classified and det6[3] not in classified and det6[4] not in classified:
 			classified.append(i)
+			thisSide = list(det6) + [i]
+			x = int(np.mean([diceEyes[k][0] for k in thisSide]))
+			y = int(np.mean([diceEyes[k][1] for k in thisSide]))
 			for j in det6:
 				classified.append(j)
-			cv.putText(src, "Kostka 6", (circ1[0], circ1[1]), cv.FONT_HERSHEY_PLAIN, 5.0, (0, 120, 255), 10)
+			cv.putText(src, "Kostka 6", (x, y), cv.FONT_HERSHEY_PLAIN, 5.0, (0, 120, 255), 10)
+			#cv.putText(src, "Kostka 6", (circ1[0], circ1[1]), cv.FONT_HERSHEY_PLAIN, 5.0, (0, 120, 255), 10)
 	
 	# Search for dices with 3 dots
 	for i in range(len(diceEyes)):
@@ -255,13 +259,16 @@ for src in srcs:
 	for i in range(len(diceEyes)):
 		circ1 = diceEyes[i]
 		det4 = detect4(circ1, diceEyes)
-		print(det4, classified)
+		#print(det4, classified)
 		if det4 and i not in classified and det4[0] not in classified and det4[1] not in classified and det4[2] not in classified:
 			classified.append(i)
 			classified.append(det4[0])
 			classified.append(det4[1])
 			classified.append(det4[2])
-			cv.putText(src, "Kostka 4", (circ1[0], circ1[1]), cv.FONT_HERSHEY_PLAIN, 5.0, (120, 255, 0), 10)
+			thisSide = det4 + [i]
+			x = int(np.mean([diceEyes[k][0] for k in thisSide]))
+			y = int(np.mean([diceEyes[k][1] for k in thisSide]))
+			cv.putText(src, "Kostka 4", (x, y), cv.FONT_HERSHEY_PLAIN, 5.0, (120, 255, 0), 10)
 	
 	# Search for dices with to dots
 	for i in range(len(diceEyes)):
@@ -270,7 +277,10 @@ for src in srcs:
 		if det2 and i not in classified and det2[0] not in classified:
 			classified.append(i)
 			classified.append(det2[0])
-			cv.putText(src, "Kostka 2", (circ1[0], circ1[1]), cv.FONT_HERSHEY_PLAIN, 5.0, (120, 0, 255), 10)
+			thisSide = det2 + [i]
+			x = int(np.mean([diceEyes[k][0] for k in thisSide]))
+			y = int(np.mean([diceEyes[k][1] for k in thisSide]))
+			cv.putText(src, "Kostka 2", (x, y), cv.FONT_HERSHEY_PLAIN, 5.0, (120, 0, 255), 10)
 	
 	# If there are unclassified dots classify them as ones
 	for i in range(len(diceEyes)):
